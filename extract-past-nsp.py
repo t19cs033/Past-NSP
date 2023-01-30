@@ -6,9 +6,9 @@ from openpyxl.styles.borders import Border, Side
 from openpyxl import utils
 from copy import copy
 import argparse
-import re
+import datetime
 
-dist_sheet_num = 41
+dist_sheet_num = 36
 # コマンドラインから引数の受け取り，ブックの作成と読み込み
 psr  = argparse.ArgumentParser(description='')
 psr.add_argument('arg1')
@@ -18,9 +18,9 @@ args = psr.parse_args()
 past_data_book = op.load_workbook(args.arg1)
 setting_book = op.load_workbook(args.arg2)
 #new_book = op.Workbook()
-pdb_1 = past_data_book.worksheets[dist_sheet_num-1] #2022-05-01(36)
-pdb_2 = past_data_book.worksheets[dist_sheet_num] #2022-05-29(37)
-pdb_3 = past_data_book.worksheets[dist_sheet_num+1] #2022-06-26(38)
+pdb_1 = past_data_book.worksheets[dist_sheet_num-1] #2022-05-01(35)
+pdb_2 = past_data_book.worksheets[dist_sheet_num] #2022-05-29(36)
+pdb_3 = past_data_book.worksheets[dist_sheet_num+1] #2022-06-26(37)
 sb = setting_book.worksheets[3] #希望シフトがあるシート
 
 #置換する文字列を指定
@@ -34,7 +34,7 @@ for list in Henkan_mae:
     new_text = pdb_2.cell(row=1,column=1).value.replace(list, Henkan_go[i-1])
     pdb_2.cell(row=1,column=1).value = new_text
 
-sb.cell(row=1,column=2).value = pdb_2.cell(row=1,column=1).value
+sb.cell(row=1,column=2).value = datetime.date(2022, 5, 29)
 
 def PrintShifts(sheet, startcol, endcol, diffcol):
     for i in range(5, 89):
@@ -119,6 +119,11 @@ for i in range(3, 35):
         #if ws1.cell(row=i*2-3, column=j).value != sbs.cell(row=i, column=j).value and sbs.cell(row=i, column=j).value != None:
             #ws1.cell(row=i*2-2, column=j).fill = PatternFill(fgColor='FF1493',bgColor="FF1493", fill_type = "solid")
  """
+# 無駄な値をクリア
+for row in sb.iter_rows(min_row=35, min_col=5, max_row=50, max_col=46):
+  for cell in row:
+      cell.value = None
+
 str_text = str(new_text)
 replace_text = str_text.replace('/','-')
 file_name = replace_text + ".xlsx"
